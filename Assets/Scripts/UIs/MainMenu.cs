@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace jam
+namespace NextTurn
 {
   public class MainMenu : MonoBehaviour
   {

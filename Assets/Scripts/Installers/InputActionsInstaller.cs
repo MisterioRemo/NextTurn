@@ -1,7 +1,7 @@
 using UnityEngine;
 using Zenject;
 
-namespace jam
+namespace NextTurn
 {
   public class InputActionsInstaller : MonoInstaller
   {
