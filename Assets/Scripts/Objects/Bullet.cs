@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Zenject;
 
 namespace NextTurn
 {
@@ -12,6 +13,8 @@ namespace NextTurn
 
     private Rigidbody2D rb;
     private int         hitCount = 0;
+
+    [Inject] private PlayerAnimator playerAnim;
     #endregion
 
     #region PROPERTIES
@@ -37,9 +40,10 @@ namespace NextTurn
     #region COLLISIONS
     private void OnCollisionEnter2D(Collision2D _collision)
     {
-      if (_collision.otherCollider.CompareTag("Player"))
+      if (_collision.gameObject.CompareTag("Player"))
       {
-        // todo: player die, play anim, restart
+        // todo: player die, restart
+        playerAnim.OnHitted(_collision.otherCollider.gameObject.transform.position);
       }
 
       if (hitCount++ >= maxHitCount)

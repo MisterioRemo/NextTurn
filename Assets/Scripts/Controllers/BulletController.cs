@@ -16,6 +16,7 @@ namespace NextTurn
     private Vector2        mouseDirection;
     private bool           canFire = true;
 
+    [Inject] private DiContainer     diContainer;
     [Inject] private JamInputActions inputActions;
     #endregion
 
@@ -32,12 +33,13 @@ namespace NextTurn
     private void Awake()
     {
       sprite = GetComponentInChildren<SpriteRenderer>();
-      bullet = Instantiate(bulletPrefab, sprite.transform.position, sprite.transform.rotation);
-      bullet.gameObject.SetActive(false);
     }
 
     private void Start()
     {
+      bullet = diContainer.InstantiatePrefab(bulletPrefab).GetComponent<Bullet>();
+      bullet.gameObject.SetActive(false);
+
       inputActions.Player.Fire.performed += Fire;
       bullet.OnLifespanEnded             += ShowAim;
     }

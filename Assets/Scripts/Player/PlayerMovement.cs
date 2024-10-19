@@ -7,7 +7,6 @@
  */
 
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using Zenject;
 using static UnityEngine.InputSystem.InputAction;
@@ -25,8 +24,7 @@ namespace NextTurn
     public PlayerMovementData Data;
 
     #region COMPONENTS
-    public Rigidbody2D RB    { get; private set; }
-    public Animator    Anim  { get; private set; }
+    public Rigidbody2D RB { get; private set; }
     #endregion
 
     #region STATE PARAMETERS
@@ -57,11 +55,12 @@ namespace NextTurn
     private int     _dashesLeft;
     private bool    _dashRefilling;
     private Vector2 _lastDashDir;
-    private bool   _isDashAttacking;
+    private bool    _isDashAttacking;
     #endregion
 
     #region INPUT PARAMETERS
     [Inject] private JamInputActions _inputActions;
+    [Inject] private PlayerAnimator  _animator;
 
     private Vector2 _moveInput;
 
@@ -89,7 +88,6 @@ namespace NextTurn
     private void Awake()
     {
       RB   = GetComponent<Rigidbody2D>();
-      Anim = GetComponentInChildren<Animator>();
     }
 
     private void Start()
@@ -131,8 +129,8 @@ namespace NextTurn
         //Ground Check
         if (Physics2D.OverlapBox(_groundCheckPoint.position, _groundCheckSize, 0, _groundLayer)) //checks if set box overlaps with ground
         {
-          //if (LastOnGroundTime < -0.1f)
-          //  Anim.SetBool("Jump", false);
+          if (LastOnGroundTime < -0.1f)
+            _animator.JustLanded = true;
           LastOnGroundTime = Data.coyoteTime; //if so sets the lastGrounded to coyoteTime
         }
 
@@ -183,7 +181,7 @@ namespace NextTurn
           _isJumpCut = false;
           _isJumpFalling = false;
           Jump();
-          //Anim.SetBool("Jump", true);
+          _animator.StartedJumping = true;
         }
         //WALL JUMP
         else if (CanWallJump() && LastPressedJumpTime > 0)
@@ -418,6 +416,7 @@ namespace NextTurn
       Vector3 scale        = transform.localScale;
       scale.x             *= -1;
       transform.localScale = scale;
+      _animator.OnTurned();
 
       IsFacingRight = !IsFacingRight;
     }
